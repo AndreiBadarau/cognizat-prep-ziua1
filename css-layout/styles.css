@@ -11,6 +11,10 @@ h1 {
 }
 
 .cards {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: center;
 }
 
 .card {
@@ -20,10 +24,12 @@ h1 {
   border: 3px solid #ccc;
   border-radius: 8px;
   background-color: #f9f9f9;
+  line-height: 1.6;
 }
 
 .card h2 {
   margin-top: 0;
+  font-style: italic;
 }
 
 .card button {
