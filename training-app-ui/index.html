@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fullstack Web Training - Mockup</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>Fullstack Web Training</h1>
+      <p class="tagline">
+        HTML/CSS | HTTP/HTTPS | OOP & Algoritmica | Package Manager
+      </p>
+    </header>
+
+    <main class="layout">
+      <section class="modules">
+        <h2>Training modules</h2>
+        <ul class="modules-list">
+          <li class="module-card" data-module="html-css">
+            <h3>HTML & CSS basics</h3>
+            <p>Structura, box model, layout cu Flexbox</p>
+          </li>
+          <li class="module-card" data-module="http-https">
+            <h3>HTTP & HTTPS</h3>
+            <p>Request/Response, metode, coduri de status, HTTPS</p>
+          </li>
+          <li class="module-card" data-module="oop-algo">
+            <h3>OOP & Algoritmica</h3>
+            <p>Clase, obiecte, mostenire, structuri de date si algoritmi</p>
+          </li>
+          <li class="module-card" data-module="packages">
+            <h3>Package Manager</h3>
+            <p>npm, pachete, module, versionare</p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="details">
+        <h2>Module details</h2>
+        <p>
+          Selecteaza un modul din stanga pentru a vedea detalii. Intr-un proiect
+          real, aici ai afisa informatii incarcate dintr-un API.
+        </p>
+        <div class="details-box">
+          <h3 id="details-title">Exemplu: HTTP & HTTPS</h3>
+          <ul id="details-list">
+            <li>Ce este un protocol</li>
+            <li>Metode HTTP uzuale (GET, POST, PUT, DELETE)</li>
+            <li>Coduri de răspuns (200, 404, 500 etc.)</li>
+            <li>Diferența între HTTP și HTTPS</li>
+          </ul>
+
+          <hr />
+          <button id="load-tasks-btn">Încarcă sample tasks din API</button>
+          <ul id="api-tasks"></ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Pagină demo pentru pregătirea interviului - nu este site oficial.</p>
+    </footer>
+  </body>
+
+  <script>
+    const moduleDetails = {
+      "html-css": {
+        title: "HTML & CSS basics",
+        items: [
+          "Structura unui document HTML (head, body, elemente de bază)",
+          "Box model: content, padding, border, margin",
+          "Selectori CSS, clasă vs id",
+          "Layout de bază cu Flexbox",
+        ],
+      },
+      "http-https": {
+        title: "HTTP & HTTPS",
+        items: [
+          "Model request/response (metode, URL, headers, body)",
+          "Metode HTTP uzuale: GET, POST, PUT, DELETE",
+          "Coduri de status: 200, 404, 500 etc.",
+          "Ce aduce HTTPS în plus: criptare, certificat, securitate",
+        ],
+      },
+      "oop-algo": {
+        title: "OOP & Algoritmică",
+        items: [
+          "Concepte OOP: clasă, obiect, moștenire, polimorfism",
+          "Exemplu de modelare: User, Task, Admin",
+          "Probleme de bază pe array/string (sumă, minim, palindrom)",
+          "Noțiunea de complexitate: O(1), O(n), O(n^2)",
+        ],
+      },
+      packages: {
+        title: "Package managers",
+        items: [
+          "Ce este un package manager (npm) și de ce îl folosim",
+          "Structura fișierului package.json",
+          "Diferența între dependencies și devDependencies",
+          "Scripturi npm: npm run start, npm run test",
+        ],
+      },
+    };
+
+    const moduleCards = document.querySelectorAll(".module-card");
+    const detailsTitle = document.getElementById("details-title");
+    const detailsList = document.getElementById("details-list");
+
+    function updateDetails(moduleKey) {
+      const details = moduleDetails[moduleKey];
+      if (!details) return;
+      detailsTitle.textContent = details.title;
+      detailsList.innerHTML = "";
+      details.items.forEach((text) => {
+        const li = document.createElement("li");
+        li.textContent = text;
+        detailsList.appendChild(li);
+      });
+    }
+
+    moduleCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        const key = card.dataset.module;
+        updateDetails(key);
+
+        moduleCards.forEach((c) => c.classList.remove("active-module"));
+        card.classList.add("active-module");
+      });
+    });
+
+    const loadTasksBtn = document.getElementById("load-tasks-btn");
+    const apiTasksList = document.getElementById("api-tasks");
+
+    async function loadSampleTasks() {
+      apiTasksList.innerHTML = "<li>Loading tasks...</li>";
+      try {
+        const response = await fetch(
+          "https://jsonplaceholder.typicode.com/todos?_limit=5"
+        );
+
+        if (!response.ok) {
+          apiTasksList.innerHTML = `<li>Eroare: status ${response.status}</li>`;
+          return;
+        }
+
+        const data = await response.json();
+
+        apiTasksList.innerHTML = "";
+        data.forEach((todo) => {
+          const li = document.createElement("li");
+          li.textContent = todo.title;
+          apiTasksList.appendChild(li);
+        });
+      } catch (error) {
+        apiTasksList.innerHTML = `<li>Eroare la încărcare: ${error.message}</li>`;
+      }
+    }
+
+    loadTasksBtn.addEventListener("click", loadSampleTasks);
+
+    function countOccurrences(arr) {
+      const freq = {};
+
+      for (const value of arr) {
+        if (freq[value] === undefined) {
+          freq[value] = 1;
+        } else {
+          freq[value]++;
+        }
+      }
+
+      return freq;
+    }
+
+    // Test
+    console.log(countOccurrences(["a", "b", "a", "c", "b", "a"]));
+    // { a: 3, b: 2, c: 1 }
+
+    function firstNonRepeatingChar(str) {
+      const freq = {};
+
+      // Prima trecere: număr aparițiile
+      for (const ch of str) {
+        if (freq[ch] === undefined) {
+          freq[ch] = 1;
+        } else {
+          freq[ch]++;
+        }
+      }
+
+      // A doua trecere: caut primul cu frecvență 1
+      for (const ch of str) {
+        if (freq[ch] === 1) {
+          return ch;
+        }
+      }
+
+      return null;
+    }
+
+    // Teste
+    console.log(firstNonRepeatingChar("abacbd")); // c
+    console.log(firstNonRepeatingChar("aabbcc")); // null
+    console.log(firstNonRepeatingChar("swiss")); // w
+  </script>
+</html>
